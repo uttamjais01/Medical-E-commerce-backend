@@ -17,14 +17,22 @@ app.use(express.urlencoded({ extended : true}))
 app.use(cookieParser())
 
 const corsOption = {
-    origin: [
-        "http://localhost:5173",
-        "https://medical-e-commerce-frontend-t4xx.vercel.app"
-    ],
-    credentials: true
-}
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "https://medical-e-commerce-frontend-t4xx.vercel.app"
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+};
 
-app.use(cors(corsOption))
+app.use(cors(corsOption));
+app.options('*', cors(corsOption));
 
 app.use('/user',userRoutes)
 app.use('/admin',adminRoutes)
